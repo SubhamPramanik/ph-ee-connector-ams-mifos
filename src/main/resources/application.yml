@@ -1,5 +1,5 @@
 camel:
-  server-port: 5000
+  server-port: 7000
   springboot:
     main-run-controller: true
   dataformat:
@@ -14,7 +14,7 @@ zeebe:
     number-of-workers: 7
     evenly-allocated-max-jobs: "#{${zeebe.client.max-execution-threads} / ${zeebe.client.number-of-workers}}"
   broker:
-    contactpoint: "127.0.0.1:26500"
+    contactpoint: "4ae8d42c-5f02-4e18-b4d4-f4d3d92fc824.zeebe.camunda.io:443"
 
 ams:
   local:
