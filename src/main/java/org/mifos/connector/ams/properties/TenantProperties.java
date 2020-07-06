@@ -24,6 +24,7 @@ public class TenantProperties {
     }
 
     public Tenant getTenant(String name) {
+        // return new Tenant("tn05", "mifos", "password", "basic", "in03tn05");
         return getTenants().stream()
                 .filter(t -> t.getName().equals(name))
                 .findFirst()

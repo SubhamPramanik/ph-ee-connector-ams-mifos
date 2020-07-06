@@ -1,5 +1,5 @@
 camel:
-  server-port: 5000
+  server-port: ${PORT:7000}
   springboot:
     main-run-controller: true
   dataformat:
@@ -19,17 +19,28 @@ ams:
     keystore-path: keystore.jks
     keystore-password: openmf
     interop:
-      host: https://localhost:8443
+      host: https://leopard.mifos.io:8443
       base-url: /fineract-provider/api/v1
       quotes-path: ${ams.local.interop.base-url}/interoperation/quotes
       parties-path: ${ams.local.interop.base-url}/interoperation/parties/{idType}/{idValue}
       transfers-path: ${ams.local.interop.base-url}/interoperation/transfers
       accounts-path: ${ams.local.interop.base-url}/interoperation/accounts/{externalAccountId}
     customer:
-      host: https://localhost:8443
+      host: https://leopard.mifos.io:8443
       base-url: /fineract-provider/api/v1
       path: ${ams.local.customer.base-url}/clients/{clientId}
     account:
-      host: https://localhost:8443
+      host: https://leopard.mifos.io:8443
     auth:
-      host: https://localhost:8443
+      host: https://leopard.mifos.io:8443
+    tenants:
+      - name: tn05
+        user: mifos
+        password: password
+        authtype: basic
+        fspId: in03tn05
+      - name: tn06
+        user: mifos
+        password: password
+        authtype: basic
+        fspId: in03tn06

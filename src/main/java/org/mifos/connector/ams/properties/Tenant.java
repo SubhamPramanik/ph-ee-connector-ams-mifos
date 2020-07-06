@@ -7,6 +7,13 @@ public class Tenant {
     public Tenant() {
     }
 
+    public Tenant(String name, String user, String password, String authtype, String fspId) {
+        this.name = name;
+        this.password = password;
+        this.authtype = authtype;
+        this.fspId = fspId;
+    }
+
     public String getName() {
         return name;
     }
