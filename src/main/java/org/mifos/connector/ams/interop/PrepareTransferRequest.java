@@ -6,6 +6,8 @@ import org.apache.camel.Processor;
 import org.mifos.connector.common.ams.dto.QuoteFspResponseDTO;
 import org.mifos.connector.common.ams.dto.TransferFspRequestDTO;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
+import org.mifos.connector.common.mojaloop.dto.Extension;
+import org.mifos.connector.common.mojaloop.dto.ExtensionList;
 import org.mifos.connector.common.mojaloop.dto.FspMoneyData;
 import org.mifos.connector.common.mojaloop.dto.TransactionType;
 import org.mifos.connector.common.mojaloop.type.TransactionRole;
@@ -15,12 +17,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.mifos.connector.ams.camel.config.CamelProperties.EXTERNAL_ACCOUNT_ID;
-import static org.mifos.connector.ams.camel.config.CamelProperties.LOCAL_QUOTE_RESPONSE;
-import static org.mifos.connector.ams.camel.config.CamelProperties.TRANSACTION_ID;
-import static org.mifos.connector.ams.camel.config.CamelProperties.CHANNEL_REQUEST;
 import static org.mifos.connector.ams.camel.config.CamelProperties.TRANSACTION_ROLE;
-import static org.mifos.connector.ams.camel.config.CamelProperties.TRANSFER_CODE;
+import static org.mifos.connector.ams.zeebe.ZeebeVariables.CHANNEL_REQUEST;
+import static org.mifos.connector.ams.zeebe.ZeebeVariables.EXTERNAL_ACCOUNT_ID;
+import static org.mifos.connector.ams.zeebe.ZeebeVariables.LOCAL_QUOTE_RESPONSE;
+import static org.mifos.connector.ams.zeebe.ZeebeVariables.TRANSACTION_ID;
+import static org.mifos.connector.ams.zeebe.ZeebeVariables.TRANSFER_CODE;
 
 @Component
 @ConditionalOnExpression("${ams.local.enabled}")
@@ -51,6 +53,13 @@ public class PrepareTransferRequest implements Processor {
             exchange.setProperty(TRANSFER_CODE, transferCode);
         }
 
+        ExtensionList extensionList = channelRequest.getExtensionList();
+        String note = extensionList == null ? "" : extensionList.getExtension().stream()
+                .filter(e -> "comment".equals(e.getKey()))
+                .findFirst()
+                .map(Extension::getValue)
+                .orElse("");
+
         TransferFspRequestDTO transferRequestDTO = new TransferFspRequestDTO(exchange.getProperty(TRANSACTION_ID, String.class),
                 transferCode,
                 exchange.getProperty(EXTERNAL_ACCOUNT_ID, String.class),
@@ -59,7 +68,7 @@ public class PrepareTransferRequest implements Processor {
                 localQuoteResponse.getFspCommission(),
                 TransactionRole.valueOf(exchange.getProperty(TRANSACTION_ROLE, String.class)),
                 transactionType,
-                "");
+                note);
 
         exchange.getIn().setBody(transferRequestDTO);
     }
